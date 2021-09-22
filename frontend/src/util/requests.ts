@@ -90,7 +90,7 @@ axios.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status === 401) {
+    if (error.response.status === 401 || error.response.status === 403) {
       history.push('/admin/auth');
     }
     return Promise.reject(error);
