@@ -1,12 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import qs from 'qs';
 
-export const BASE_URL = process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:8080';
+export const BASE_URL =
+  process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:8080';
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID ?? 'dscatalog';
 const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET ?? 'dscatalog123';
 const tokenKey = 'authData';
-
-
 
 type LoginResponse = {
   access_token: string;
@@ -16,7 +15,6 @@ type LoginResponse = {
   userFirstName: string;
   userId: number;
 };
-
 
 type LoginData = {
   username: string;
@@ -41,15 +39,24 @@ export const requestBackendLogin = (loginData: LoginData) => {
     data,
     headers,
   });
+};
 
-}
+export const requestBackend = (config: AxiosRequestConfig) => {
+  const headers = config.withCredentials
+    ? {
+        ...config.headers,
+        Authorization: 'Bearer ' + getAuthData().access_token,
+      }
+    : config.headers;
 
-export const saveAuthData = (obj : LoginResponse) => {
+  return axios({ ...config, baseURL: BASE_URL, headers });
+};
+
+export const saveAuthData = (obj: LoginResponse) => {
   localStorage.setItem(tokenKey, JSON.stringify(obj));
-}
+};
 
 export const getAuthData = () => {
-  const str = localStorage.getItem(tokenKey) ?? "{}";
+  const str = localStorage.getItem(tokenKey) ?? '{}';
   return JSON.parse(str) as LoginResponse;
-  
-}
+};
