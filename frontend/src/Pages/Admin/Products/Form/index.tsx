@@ -2,32 +2,56 @@ import { AxiosRequestConfig } from 'axios';
 import { useForm } from 'react-hook-form';
 import { Product } from 'types/product';
 import { requestBackend } from 'util/requests';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import './styles.css';
+import { useEffect } from 'react';
+
+type UrlParams = {
+    productId: string;
+};
 
 const Form = () => {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<Product>();
+    const { productId } = useParams<UrlParams>();
+
+    const isEditing = productId !== 'create';
+
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<Product>();
 
     const history = useHistory();
 
+    useEffect(() => {
+        if (isEditing) {
+          requestBackend({ url: `/products/${productId}` }).then((response) => { 
+            const product = response.data as Product;
+    
+            setValue('name', product.name);
+            setValue('price', product.price);
+            setValue('description', product.description);
+            setValue('imgUrl', product.imgUrl);
+            setValue('categories', product.categories);
+          });
+        }
+      }, [isEditing, productId, setValue]);
+     
+
     const onSubmit = (formData: Product) => {
 
-        const data = { ...formData, categories: [ {id: 1, name: ""} ]}
+        const data = { ...formData, categories: isEditing ? formData.categories : [{ id: 1, name: "" }] }
 
         const config: AxiosRequestConfig = {
-            method: 'POST',
-            url: "/products", 
+            method: isEditing ? 'PUT' : 'POST',
+            url: isEditing ? `/products/${productId}` : '/products',
             data,
-            withCredentials: true 
+            withCredentials: true
         };
 
         requestBackend(config)
-            .then(() => {                                
-               history.push('/admin/products');               
+            .then(() => {
+                history.push('/admin/products');
             })
-            .catch(error => {             
+            .catch(error => {
                 console.log('ERRO', error);
             })
     };
@@ -44,44 +68,44 @@ const Form = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="row product-crud-inputs-container">
                         <div className="col-lg-6 product-crud-inputs-left-container">
-                            
+
                             <div className="margin-bottom-30">
                                 <input
-                                {...register("name", {
-                                    required: 'Campo obrigatório'                                       
-                                })}
-                                type="text"
-                                className={`form-control base-input ${errors.name ? 'is-invalid' : ''}`}
-                                placeholder="Nome do produto"
-                                name="name"
+                                    {...register("name", {
+                                        required: 'Campo obrigatório'
+                                    })}
+                                    type="text"
+                                    className={`form-control base-input ${errors.name ? 'is-invalid' : ''}`}
+                                    placeholder="Nome do produto"
+                                    name="name"
                                 />
                                 <div className="invalid-feedback d-block">{errors.name?.message}</div>
                             </div>
 
                             <div className="margin-bottom-30">
                                 <input
-                                {...register("price", {
-                                    required: 'Campo obrigatório'                                       
-                                })}
-                                type="text"
-                                className={`form-control base-input ${errors.price ? 'is-invalid' : ''}`}
-                                placeholder="Preço"
-                                name="price"
+                                    {...register("price", {
+                                        required: 'Campo obrigatório'
+                                    })}
+                                    type="text"
+                                    className={`form-control base-input ${errors.price ? 'is-invalid' : ''}`}
+                                    placeholder="Preço"
+                                    name="price"
                                 />
                                 <div className="invalid-feedback d-block">{errors.price?.message}</div>
-                            </div> 
+                            </div>
 
                         </div>
                         <div className="col-lg-6">
                             <div>
-                                <textarea 
+                                <textarea
                                     rows={10}
                                     {...register("description", {
-                                        required: 'Campo obrigatório'                                       
-                                    })}                                    
+                                        required: 'Campo obrigatório'
+                                    })}
                                     className={`form-control base-input h-auto ${errors.price ? 'is-invalid' : ''}`}
                                     placeholder="Descrição"
-                                    name="description"                                                                        
+                                    name="description"
                                 />
                             </div>
                             <div className="invalid-feedback d-block">{errors.description?.message}</div>
