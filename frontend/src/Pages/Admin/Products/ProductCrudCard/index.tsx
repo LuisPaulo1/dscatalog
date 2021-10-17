@@ -1,14 +1,15 @@
 import ProductPrice from 'components/ProductPrice';
 import CategoryBadge from 'pages/Admin/Products/CategoryBadge'
+import { Link } from 'react-router-dom';
 import { Product } from 'types/product'
 
 import './styles.css';
 
 type Props = {
-    product: Product;
+  product: Product;
 }
 
-const ProductCrudCard = ( { product } : Props) => {
+const ProductCrudCard = ({ product }: Props) => {
   return (
     <div className="base-card product-crud-card">
       <div className="product-crud-card-top-container">
@@ -18,22 +19,24 @@ const ProductCrudCard = ( { product } : Props) => {
       <div className="product-crud-card-description">
         <div className="product-crud-card-bottom-container">
           <h6>{product.name}</h6>
-          <ProductPrice price = {product.price} />
+          <ProductPrice price={product.price} />
         </div>
         <div className="product-crud-categories-container">
-            {product.categories.map((category) => (
-                <CategoryBadge name={category.name} key={category.id} />
-              ))}
+          {product.categories.map((category) => (
+            <CategoryBadge name={category.name} key={category.id} />
+          ))}
         </div>
       </div>
 
       <div className="product-crud-card-buttons-container">
-           <button className="btn btn-outline-danger product-crud-card-button product-crud-card-button-first">
-                EXCLUIR   
-           </button>   
-           <button className="btn btn-outline-secondary product-crud-card-button">
-                EDITAR   
-           </button>   
+        <button className="btn btn-outline-danger product-crud-card-button product-crud-card-button-first">
+          EXCLUIR
+        </button>
+        <Link to={`/admin/products/${product.id}`} >
+          <button className="btn btn-outline-secondary product-crud-card-button">
+            EDITAR
+          </button>
+        </Link>
       </div>
     </div>
   );
