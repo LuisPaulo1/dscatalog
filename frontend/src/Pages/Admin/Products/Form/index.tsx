@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { Product } from 'types/product';
 import { requestBackend } from 'util/requests';
 import { useHistory, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Category } from 'types/category';
 import Select from 'react-select';
 
 import './styles.css';
@@ -14,13 +15,6 @@ type UrlParams = {
 
 const Form = () => {
 
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-      ]
-      
-
     const { productId } = useParams<UrlParams>();
 
     const isEditing = productId !== 'create';
@@ -29,20 +23,28 @@ const Form = () => {
 
     const history = useHistory();
 
+    const [selectCategories, setSelectCategories] = useState<Category[]>([]);
+
+    useEffect(() => {
+        requestBackend({ url: '/categories' }).then((response) => {
+            setSelectCategories(response.data.content);
+        });
+    }, []);
+
     useEffect(() => {
         if (isEditing) {
-          requestBackend({ url: `/products/${productId}` }).then((response) => { 
-            const product = response.data as Product;
-    
-            setValue('name', product.name);
-            setValue('price', product.price);
-            setValue('description', product.description);
-            setValue('imgUrl', product.imgUrl);
-            setValue('categories', product.categories);
-          });
+            requestBackend({ url: `/products/${productId}` }).then((response) => {
+                const product = response.data as Product;
+
+                setValue('name', product.name);
+                setValue('price', product.price);
+                setValue('description', product.description);
+                setValue('imgUrl', product.imgUrl);
+                setValue('categories', product.categories);
+            });
         }
-      }, [isEditing, productId, setValue]);
-     
+    }, [isEditing, productId, setValue]);
+
 
     const onSubmit = (formData: Product) => {
 
@@ -91,10 +93,12 @@ const Form = () => {
                             </div>
 
                             <div className="margin-bottom-30">
-                               <Select 
-                                    options={options} 
+                                <Select
+                                    options={selectCategories}
                                     isMulti
-                                    classNamePrefix="product-crud-select"                                    
+                                    classNamePrefix="product-crud-select"
+                                    getOptionLabel={(category: Category) => category.name}
+                                    getOptionValue={(category: Category) => String(category.id)}
                                 />
                             </div>
 
