@@ -3,15 +3,23 @@ import { useForm } from 'react-hook-form';
 import { Product } from 'types/product';
 import { requestBackend } from 'util/requests';
 import { useHistory, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import Select from 'react-select';
 
 import './styles.css';
-import { useEffect } from 'react';
 
 type UrlParams = {
     productId: string;
 };
 
 const Form = () => {
+
+    const options = [
+        { value: 'chocolate', label: 'Chocolate' },
+        { value: 'strawberry', label: 'Strawberry' },
+        { value: 'vanilla', label: 'Vanilla' }
+      ]
+      
 
     const { productId } = useParams<UrlParams>();
 
@@ -80,6 +88,14 @@ const Form = () => {
                                     name="name"
                                 />
                                 <div className="invalid-feedback d-block">{errors.name?.message}</div>
+                            </div>
+
+                            <div className="margin-bottom-30">
+                               <Select 
+                                    options={options} 
+                                    isMulti
+                                    classNamePrefix="product-crud-select"                                    
+                                />
                             </div>
 
                             <div className="margin-bottom-30">
