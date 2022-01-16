@@ -1,10 +1,10 @@
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
-import Home from 'Pages/Home';
+import Home from 'pages/Home';
 import Navbar from 'components/Navbar';
-import Catalog from 'Pages/Catalog';
-import Admin from 'Pages/Admin';
-import ProductDetails from 'Pages/ProductDetails';
-import Auth from 'Pages/Admin/Auth';
+import Catalog from 'pages/Catalog';
+import Admin from 'pages/Admin';
+import ProductDetails from 'pages/ProductDetails';
+import Auth from 'pages/Admin/Auth';
 import history from 'util/history';
 
 const Routes = () => (
