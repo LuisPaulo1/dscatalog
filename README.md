@@ -2,7 +2,7 @@
 
 # Sobre o projeto
 
-É um ecommerce que gerencia produtos pelos usuários logados no sistema.
+É um ecommerce que gerencia produtos pelos usuários logado no sistema.
 
 ## Layouts da aplicação
 
